@@ -1,0 +1,25 @@
+.nav-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4f46e5;
+  text-decoration: none;
+  margin: 0 15px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #7c3aed;
+  text-decoration: underline;
+}
+
+.nav-link.active {
+  color: #1e293b;
+  font-weight: 600;
+  cursor: default;
+}
+.page-container{
+    margin:auto;
+}

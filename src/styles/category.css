@@ -1,0 +1,31 @@
+.number-of-products{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    min-width: 100vw;
+    overflow-y:scroll;
+    margin-top:20px;
+    margin-bottom:20px;
+
+
+}
+.imagicon{
+    height:70px;
+    width:70px;
+}
+.each-category{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.each-text{
+    color:black;
+    cursor: pointer;
+    
+
+}
+a{
+    color:black;
+}
