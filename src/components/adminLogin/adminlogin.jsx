@@ -1,44 +1,103 @@
 "use client"
 
-import { useState } from "react"
+
 import "./adminlogin.css"
+import { useState } from "react"
+
+import { useNavigate } from "react-router-dom"
+import  Cookies from 'js-cookie'
+import { useEffect } from "react"
 
 function AdminLogin() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  })
-  const [showPassword, setShowPassword] = useState(false)
+  const Navigate=useNavigate()
+
+  const [username,setUsername]=useState('')
+  const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState("")
   const [error, setError] = useState("")
+  const [showPassword,setShowPassword]=useState(false)
 
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
-  }
 
-  const handleSubmit = (e) => {
+  useEffect(()=>{
+  document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+
+  },[])
+
+  const handleSubmit =async (e) => {
     e.preventDefault()
     setIsLoading(true)
-    setMessage("")
-    setError("")
+    const userDetails={username,password}
+  
+    
+    try{
+      const url="http://localhost:3001/admin/signIn"
+      const options={
+        method:"POST",
+        credentials:"include",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify(userDetails)
 
-    // Simple admin validation (you can change these credentials)
-    const ADMIN_EMAIL = "admin@store.com"
-    const ADMIN_PASSWORD = "admin123"
-
-    setTimeout(() => {
-      if (formData.email === ADMIN_EMAIL && formData.password === ADMIN_PASSWORD) {
-        setMessage("Admin login successful! Welcome to the dashboard.")
-        console.log("Admin Login Successful:", formData)
-      } else {
-        setError("Invalid admin credentials. Please check your email and password.")
+        
       }
-      setIsLoading(false)
-    }, 1500)
+
+      const response=await fetch(url,options) 
+      const data=await response.json()
+      console.log(data)
+
+      
+      if (response.ok){
+        Cookies.set("token",data.jwttoken)
+        
+        setMessage(data.message)
+        setError("")
+
+        setTimeout(() => {
+          Navigate("/admin")
+        }, 2000);
+      
+      }
+      
+      console.log(response.ok) 
+      if (!response.ok){
+         setError(data.message)
+        
+         
+      setTimeout(() => {
+        setIsLoading(false)
+        setError('') 
+        setUsername("")
+         setPassword("")
+      
+
+
+       
+        
+      }, 1000);
+      }
+     
+      
+    
+
+    }
+    catch(err){
+      setError(err.message)
+      setUsername('')
+      setPassword('')
+       setIsLoading(false)
+
+    }
+
+
+
+
+  
+
+   
+
+
   }
 
   return (
@@ -53,10 +112,10 @@ function AdminLogin() {
         <div className="info-box">
           <h4>🔐 Admin Credentials</h4>
           <p>
-            <strong>Email:</strong> admin@store.com
+            <strong>username:</strong> shankar_0077
           </p>
           <p>
-            <strong>Password:</strong> admin123
+            <strong>Password:</strong>uma@1234
           </p>
           <small>Change these in production!</small>
         </div>
@@ -64,23 +123,23 @@ function AdminLogin() {
 
       <form onSubmit={handleSubmit} className="admin-form">
         <div className="form-group">
-          <label htmlFor="adminEmail">Admin Email</label>
+          <label htmlFor="adminEmail" className="label">Admin Username</label>
           <div className="input-container">
             <span className="input-icon">👨‍💼</span>
             <input
-              type="email"
+              type="text"
               id="adminEmail"
-              name="email"
-              placeholder="Enter admin email"
-              value={formData.email}
-              onChange={handleInputChange}
+              name="username"
+              placeholder="Enter admin username"
+             value={username}
+              onChange={(e)=>{setUsername(e.target.value)}}
               required
             />
           </div>
         </div>
 
         <div className="form-group">
-          <label htmlFor="adminPassword">Admin Password</label>
+          <label htmlFor="adminPassword" className="label">Admin Password</label>
           <div className="input-container">
             <span className="input-icon">🔐</span>
             <input
@@ -88,8 +147,8 @@ function AdminLogin() {
               id="adminPassword"
               name="password"
               placeholder="Enter admin password"
-              value={formData.password}
-              onChange={handleInputChange}
+              value={password}
+              onChange={(e)=>{setPassword(e.target.value)}}
               required
             />
             <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>

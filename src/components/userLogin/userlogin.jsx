@@ -4,6 +4,7 @@ import { useState } from "react"
 import "./userlogin.css"
 import { useNavigate } from "react-router-dom"
 import  Cookies from 'js-cookie'
+import { useEffect } from "react"
 
 function UserLogin() {
   const navigation=useNavigate()
@@ -13,15 +14,19 @@ function UserLogin() {
   })
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-    const [errors, setErrors] = useState([])
+    const [errors, setErrors] = useState('')
   const [message, setMessage] = useState("")
   const [username,setUsername]=useState('')
   const [password,setPassword]=useState('')
 
+ useEffect(() => {
+    // 💣 Delete the token cookie when the Login page loads
+    document.cookie = "token=; path=/;";
+  }, []);
 
   const handleSubmit = async(e) => {
     e.preventDefault()
-    setErrors([]);
+    
 
     setIsLoading(true)
     const userDetails={username,password}
@@ -31,42 +36,59 @@ function UserLogin() {
         method:"POST",
         credentials: "include",
         headers:{
-        "Content-Type":"application/json",
+        "Content-Type":"application/json"
         },
         
         body:JSON.stringify(userDetails)
       }
       const response=await fetch(url,options)
       const data=await response.json()
+      console.log(data) 
+
       Cookies.set("token", data.jwtToken);  // Save JWT
-      {console.log(data)}
+     
+
+
+      
        
 
-       if (!response.ok){
-        const errorTxt=await response.text()
-
-          setErrors([errorTxt])
-       }
-       setTimeout(() => {
+     if (response.ok){
+      setMessage(data.message)
+      setErrors('')
+        setTimeout(() => {
 
             navigation('/home')
 
       }, 2000);
        
-       
-       
-       setMessage(data.message)
+        
+       }
 
-    
 
+     if (!response.ok){
+      setErrors(data.message)
+      setTimeout(() => {
+              
+              setIsLoading(false)
+              setUsername("")
+              setPassword("")
+              setErrors("")
+
+       }, 1000);
+     }
        
 
     }
     catch(error){
+      setUsername("")
       setErrors(error.message)
+      setPassword("")
+      setIsLoading(false)
+      
         
     }
-    setMessage("")
+
+    
 
     // Simulate API call
     
@@ -76,6 +98,7 @@ function UserLogin() {
     <div className="user-login">
       <div className="form-header">
         <h2>Welcome Back!</h2>
+      
         <p>Sign in to your account to continue shopping</p>
       </div>
 
@@ -115,15 +138,8 @@ function UserLogin() {
           </div>
         </div>
 
-        {errors.length > 0 && (
-          <div className="error-message">
-            <ul>
-              {errors.map((error, index) => (
-                <li key={index}>❌ {error}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+      {errors && <div className="error-message">❌ {errors}</div>}
+
 
         
         <button type="submit" className="submit-btn" disabled={isLoading}>

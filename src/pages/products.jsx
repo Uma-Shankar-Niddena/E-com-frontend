@@ -210,13 +210,26 @@ function Products({ addToCart, handleAddToCart }) {
 
 
 
+  const categoryImages = {
+  Wine: "/wine-icon.svg",
+  Stuff: "/food-icon.svg",
+  Water: "/water-bottle-icon.svg",
+  cigar: "/cigar-icon.svg"
+};
+
   return (
     <>
       {/* Category Section */}
       <div className="number-of-products">
         {[ "Wine", "Stuff", "Water", "cigar"].map((cat) => (
           <div className="each-category" key={cat}>
-            <img src='/2.jpg' alt={cat} className="imagicon" />
+             <img src={categoryImages[cat]} alt={cat} className="imagicon" />
+             
+             
+
+
+
+
             <p className="each-text">
               <a href="#" onClick={() => clickedOnWineSection(cat.toLowerCase())}>{cat}</a>
             </p>

@@ -8,18 +8,41 @@ import { useNavigate } from "react-router-dom";
  * Navigation component with responsive design
  * Includes mobile hamburger menu and active link highlighting
  */
-function Navbar({cartItems}) {
+function Navbar({ram}) {
   const navigate = useNavigate();
+  /*const [totalItems,setTotalitems]=useState(0)*/
+  const totalItems=ram.length
  
-
-
+  
+    
+ 
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const location = useLocation()
-    const items=JSON.parse(localStorage.getItem('cartitems'))
 
-  const totalItems = items.length
+
+
    
 
+/*
+ 
+useEffect(() => {
+  const stored = localStorage.getItem("cartitems");
+
+  if (stored) {
+    const parsed = JSON.parse(stored);
+    setTotalitems(parsed.length);
+
+  } else {
+    setTotalitems(0); // fallback
+  }
+},[]); // ✅ run only once on mount
+*/
+
+
+ 
+
+  
+   
  
  
 

@@ -40,7 +40,7 @@ function UserRegistration() {
     setIsLoading(true)
     
     const userDetails={username,email,password}
-     const url='http://localhost:3001/signup' 
+     const url='${import.meta.env.VITE_API_URL}/signup' 
      
     try{
         const options={
@@ -60,9 +60,11 @@ function UserRegistration() {
       })
 
      const response=await fetch(url,options)
+   
    if (!response.ok) {
     const errorText = await response.text(); // fallback if it's not JSON
     console.error("Server error:", errorText);
+    setErrors(errorText)
    
     return;
   }

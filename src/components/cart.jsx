@@ -2,27 +2,20 @@
 
 import {useNavigate} from 'react-router-dom'
 import { useState } from "react"
-import "./cartItems.css"
+import "../styles/cartItem.css"
+import { Player } from '@lottiefiles/react-lottie-player';
 import { useEffect } from 'react'
+import checkOutpage from './checkOutpage'
 
-const CartComponent = ({increaseQuantity, decreaseQuantity, removeItem }) => {
+const CartComponent = ({increaseQuantity, decreaseQuantity }) => {
   const Navigate=useNavigate()
-  const [showCheckout, setShowCheckout] = useState(false)
-  const [deliveryAddress, setDeliveryAddress] = useState("")
   const [cartItems,setCartItems]=useState([])
-  const [specialInstructions, setSpecialInstructions] = useState("")
-  const [selectedPayment, setSelectedPayment] = useState("")
+  const [isLoading,setLoading]=useState(false)
 
   // Calculate totals
-  const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
-  const deliveryFee = subtotal > 50 ? 0 : 5.99
-  const taxes = subtotal * 0.08
-  const total = subtotal + deliveryFee + taxes
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0)
-useEffect( ()=>{
 
-  const fetchCartItems=async()=>{
-    localStorage.setItem("cartItems",JSON.stringify(cartItems));
+ const fetchCartItems=async()=>{
+  setLoading(true)
   try{
      const url="http://localhost:3001/cart"
      const options={
@@ -34,171 +27,126 @@ useEffect( ()=>{
      }
 
     const response=await fetch(url,options)
-    const data=await response.json()
-    
-    return data
 
-    
+    const data=await response.json()
+    console.log(data)
+    setCartItems(data.message)
+   
+ 
+   
 
   }
   catch(error){
-    return (error.message)
+    console.log (error.message)
   }
+  finally {
+  setLoading(false)  }
 
-
-  }
-
-  const data=async()=>{
-    const dataa=await fetchCartItems()
-    setCartItems(dataa.message)
 
   }
-  data()
   
+  
+useEffect(()=>{
+  fetchCartItems()
+
+
 },[])
 
+const removeItem=async(removecartItem)=>{
+   
+    const id=removecartItem
+
+    try{
+      const url="http://localhost:3001/cart/remove/${id}"
+      const options={
+        method:"DELETE",
+        credentials:"include",
+        headers:{
+          "Content-Type":"application/json"
+
+        },
+      }
+      const response=await fetch(url,options)
+      console.log(response)
+      
+      if(!response.ok){
+         alert("something went wrong on remove!")
+      }
+        ///get updated cartitems 
+        
+    
+    await fetchCartItems()
+   
+   
+    
+      
+
+      
+    }
+    catch(error){   
+    console.log(error)
+  }
+
+  } 
+
+
+
+  const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
+  const deliveryFee = subtotal > 50 ? 0 : 5.99
+  const taxes = subtotal * 0.08
+  const total = subtotal + deliveryFee + taxes
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0)
+   
+  const handlePlaceorder=()=>{
+    Navigate('/checkout')
+      
+       
+       
+
+  }
+
   // If showing checkout page
-  if (showCheckout) {
-    return (
-      <div className="checkout-container">
-        <div className="checkout-header">
-          <button className="back-button" onClick={() => setShowCheckout(false)}>
-            ← Back
-          </button>
-          <h1>Checkout</h1>
-        </div>
 
-        <div className="checkout-content">
-          <div className="checkout-form">
-            {/* Delivery Address */}
-            <div className="form-section">
-              <h2>📍 Delivery Address</h2>
-              <textarea
-                placeholder="Enter your complete delivery address..."
-                value={deliveryAddress}
-                onChange={(e) => setDeliveryAddress(e.target.value)}
-                className="address-input"
-              />
-              <div className="contact-row">
-                <input type="text" placeholder="Phone Number" className="contact-input" />
-                <input type="text" placeholder="Your Name" className="contact-input" />
-              </div>
-            </div>
 
-            {/* Delivery Time */}
-            <div className="form-section">
-              <h2>🕐 Delivery Time</h2>
-              <div className="time-options">
-                <button className="time-option active">
-                  <div>ASAP</div>
-                  <small>25-35 mins</small>
-                </button>
-                <button className="time-option">
-                  <div>Schedule</div>
-                  <small>Choose time</small>
-                </button>
-              </div>
-            </div>
-
-            {/* Payment Method */}
-            <div className="form-section">
-              <h2>💳 Payment Method</h2>
-              <div className="payment-options">
-                <button
-                  className={`payment-option ${selectedPayment === "card" ? "selected" : ""}`}
-                  onClick={() => setSelectedPayment("card")}
-                >
-                  💳 Credit/Debit Card
-                </button>
-                <button
-                  className={`payment-option ${selectedPayment === "wallet" ? "selected" : ""}`}
-                  onClick={() => setSelectedPayment("wallet")}
-                >
-                  📱 Digital Wallet
-                </button>
-                <button
-                  className={`payment-option ${selectedPayment === "cash" ? "selected" : ""}`}
-                  onClick={() => setSelectedPayment("cash")}
-                >
-                  💵 Cash on Delivery
-                </button>
-              </div>
-            </div>
-
-            {/* Special Instructions */}
-            <div className="form-section">
-              <h2>📝 Special Instructions</h2>
-              <textarea
-                placeholder="Any special requests for your order..."
-                value={specialInstructions}
-                onChange={(e) => setSpecialInstructions(e.target.value)}
-                className="instructions-input"
-              />
-            </div>
-          </div>
-
-          {/* Order Summary */}
-          <div className="checkout-summary">
-            <h2>Order Summary</h2>
-
-            <div className="summary-items">
-              {cartItems.map((item) => (
-                <div key={item.id} className="summary-item">
-                  <div>
-                    <div className="item-name">{item.name}</div>
-                    <div className="item-qty">Qty: {item.quantity}</div>
-                  </div>
-                  <div className="item-price">₹{(item.price * item.quantity).toFixed(2)}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className="summary-totals">
-              <div className="total-row">
-                <span>Subtotal</span>
-                <span>₹{subtotal.toFixed(2)}</span>
-              </div>
-              <div className="total-row">
-                <span>Delivery Fee</span>
-                <span>{deliveryFee === 0 ? "FREE" : `₹${deliveryFee.toFixed(2)}`}</span>
-              </div>
-              <div className="total-row">
-                <span>Taxes & Fees</span>
-                <span>₹{taxes.toFixed(2)}</span>
-              </div>
-              <div className="total-row final-total">
-                <span>Total</span>
-                <span>₹{total.toFixed(2)}</span>
-              </div>
-            </div>
-
-            <button className="place-order-btn" onClick={() => alert(`Order placed! Total: ₹${total.toFixed(2)}`)}>
-              Place Order • ₹{total.toFixed(2)}
-            </button>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
+ 
   // If cart is empty
-  if (cartItems.length === 0) {
-    return (
-      <div className="empty-cart-container">
-        <div className="empty-cart-content">
-          <div className="empty-cart-icon">🛒</div>
-          <h2>Your cart is empty</h2>
-          <p>Looks like you haven't added any items to your cart yet.</p>
-          <button className="start-shopping-btn" onClick={() => Navigate('/products')}>
-            Start Shopping
-          </button>
-        </div>
-      </div>
-    )
-  }
+ 
+ 
 
+
+
+
+
+ 
+  
   // Main cart view
+
+ const  animationUrl="/wineicon.json"
+
+            
   return (
+    <>
+    {
+isLoading?(<div className='for-icon'><Player
+                  autoplay
+                  loop
+                  src={animationUrl} // winebottleAni.json
+                  style={{ height: '200px', width: '200px', marginRight:"50vw" }}
+                /></div>):cartItems.length===0?(
+                    
+                        <div className='empty-cart-container'>
+                      <div className="empty-cart-content">
+                          <div className="empty-cart-icon">🛒</div>
+                          <h2>Your cart is empty</h2>
+                          <p>Looks like you haven't added any items to your cart yet.</p>
+                          <button className="start-shopping-btn" onClick={() => Navigate('/products')}>
+                            Start Shopping
+                          </button>
+                        </div>
+                        </div>
+                     
+                      ):((
+              
     <div className="cart-container">
       {/* Header */}
       <div className="cart-header">
@@ -234,7 +182,7 @@ useEffect( ()=>{
                     {item.description && <p className="item-description">{item.description}</p>}
                     {item.category && <span className="item-category">{item.category}</span>}
                   </div>
-                  <button className="remove-btn" onClick={() => removeItem(item.id)}>
+                  <button className="remove-btn" onClick={() => removeItem(item.cartId)}>
                     🗑️
                   </button>
                 </div>
@@ -290,7 +238,7 @@ useEffect( ()=>{
           </div>
 
           <div className="summary-actions">
-            <button className="checkout-btn" onClick={() => setShowCheckout(true)}>
+            <button className="checkout-btn" onClick={() => handlePlaceorder()}>
               Proceed to Checkout
             </button>
             <button className="continue-shopping-btn" onClick={() => Navigate('/products')}>
@@ -303,7 +251,9 @@ useEffect( ()=>{
           </div>
         </div>
       </div>
-    </div>
+    </div>))
+   }   
+   </>
   )
 }
 

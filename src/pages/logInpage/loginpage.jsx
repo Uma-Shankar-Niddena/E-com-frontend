@@ -31,7 +31,7 @@ function LoginPage() {
       <UserLogin />
 
       {/* Footer */}
-      <div className="page-footer">
+      <div className="footer">
         <p>&copy; 2024 E-Commerce Store. All rights reserved.</p>
       </div>
     </div>

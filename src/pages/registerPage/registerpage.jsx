@@ -8,6 +8,8 @@ function RegisterPage() {
   const navigate = useNavigate()
 
   return (
+    <div className="main-container">
+
     <div className="page-container">
       {/* Header */}
       <div className="page-header">
@@ -31,10 +33,11 @@ function RegisterPage() {
       <UserRegistration />
 
       {/* Footer */}
-      <div className="page-footer">
+      <div className="footer">
         <p>&copy; 2024 E-Commerce Store. All rights reserved.</p>
       </div>
     </div>
+     </div>
   )
 }
 

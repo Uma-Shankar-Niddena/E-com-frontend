@@ -4,6 +4,7 @@ import Footer from "./components/footer";
 import Home from "./pages/home";
 
 import './styles/tooltip.css'
+import './styles/index.css'
 import Products from "./pages/products";
 import CartProducts from "./components/cart";
 import { useState } from "react";
@@ -12,12 +13,15 @@ import RegisterPage from "./pages/registerPage/registerpage";
 import LoginPage from "./pages/logInpage/loginpage";
 import AdminLoginPage from "./pages/adminLogin/adminlogin";
 import SignInUp from './pages/signInUpForm'
-import ProtectedRouter from "./components/protectedRoute";
+import AdminpageOrders from './components/adminpage/AdminpageOrders'
 
+import ProtectedRouter from "./components/protectedRoute";
+import CheckOutpage from './components/checkOutpage'
 let count=0
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
+  const [countCartitems,setCountcart]=useState([])
 
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -25,19 +29,51 @@ function App() {
  
  
 
+useEffect(()=>{
+  localStorage.setItem("cartitems",JSON.stringify(cartItems))
 
+  const getIntial=async()=>{
+    const url='http://localhost:3001/cart' 
+  const options={
+    method:"GET",
+    credentials:"include"
+  }
+
+  
+  const responsee=await fetch(url,options)
+
+   return responsee
+
+  }
+
+  const data=async()=>{
+       const inititalCartItems=await getIntial()
+        const respo=await inititalCartItems.json()
+       
+       setCartItems(respo.message)
+
+
+  }
+
+  data()
+
+
+
+  
+   
+
+  
+})
 
   const addToCart = async (product) => {
-        localStorage.setItem("cartitems",JSON.stringify(cartItems));
- 
-    setCartItems((prevPro)=>[...prevPro,product])
+     setCartItems((prevData)=>[...prevData,product])
     setShowToast(true)
 
  
      setToastMessage(`${product.name} added to Cart!`);
     const productId=product.id
 
-    const quantity=product.quantity
+    const quantity=1
     setTimeout(() => {
           
           setToastMessage("")
@@ -61,7 +97,9 @@ function App() {
       }
 
       const response=await fetch(url,options)
-      const data=await response.json()   
+      const data=await response.json()  
+
+      
       
       
       
@@ -78,11 +116,7 @@ function App() {
     
   };
 
-  const handleAddToCart = (product) => {
-     
-    
-      
-    };
+
   const increaseQuantity = (id) => {
     setCartItems((items) =>
       items.map((item) =>
@@ -101,9 +135,12 @@ function App() {
     );
   };
 
-  const removeItem=async(id)=>{
+const removeItem=async(removecartItem)=>{
+   
+    const id=removecartItem
+
     try{
-      const url=`http://localhost:3001/cart/remove/${id}`
+      const url="http://localhost:3001/cart/remove/${id}"
       const options={
         method:"DELETE",
         credentials:"include",
@@ -113,12 +150,32 @@ function App() {
         },
       }
       const response=await fetch(url,options)
-      const data= await response.data 
-      console.log(data.message)
+      console.log(response)
+      
+      if(!response.ok){
+         alert("something went wrong on remove!")
+      }
+        ///get updated cartitems 
+        
+     const url2="http://localhost:3001/cart"
+     const options2={
+       method:"GET",
+       credentials:"include",
+      
+     }
+    const resposnefromDb=await fetch(url2,options2)
+    const updatedCartItems=await resposnefromDb.json()
+   
+   
+        setCartItems(updatedCartItems.message);
+    localStorage.setItem("cartitems", JSON.stringify(updatedCartItems));
+    
+      
+
       
     }
-    catch(error){
-    console.log("error.message")
+    catch(error){   
+    console.log(error)
   }
 
   }
@@ -126,14 +183,15 @@ function App() {
 
  
 
-  const location = useLocation();
-  const hideNavbar = location.pathname === "/" || location.pathname==='/login' || location.pathname==='/admin-login' ;
-  const hidefooter=location.pathname==='/' || location.pathname==='/login' || location.pathname==='/admin-login'; // hide on sign in/up page
+  const location = useLocation(); 
+  const hideNavbar = location.pathname === "/" || location.pathname==='/login' || location.pathname==='/admin-login' || location.pathname==="/admin" ;
+  const hidefooter=location.pathname==='/' || location.pathname==='/login' || location.pathname==='/admin-login' || location.pathname==='/admin'; // hide on sign in/up page
+
 
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-    {!hideNavbar && <Navbar cartItems={cartItems} />}
+    {!hideNavbar && <Navbar ram={cartItems}/>}
    
 
 
@@ -143,9 +201,10 @@ function App() {
           <Route path='/' element={<RegisterPage/>} />
           <Route path='/login' element={<LoginPage/>}/>
           <Route path='/admin-login' element={<AdminLoginPage/>}/>
+          <Route path='/admin' element={<AdminpageOrders/>}/>
       
           <Route path="/home" element={<ProtectedRouter><Home addToCart={addToCart} /></ProtectedRouter>} />
-          <Route path="/products" element={<ProtectedRouter><Products addToCart={addToCart}  handleAddToCart={handleAddToCart} /></ProtectedRouter>} />
+          <Route path="/products" element={<ProtectedRouter><Products addToCart={addToCart} /></ProtectedRouter>} />
           <Route
             path="/cart"
             element={
@@ -154,12 +213,13 @@ function App() {
                 increaseQuantity={increaseQuantity}
                 decreaseQuantity={decreaseQuantity}
                  removeItem={removeItem}
-                handleAddToCart={handleAddToCart}
+            
                
              
               /></ProtectedRouter>
             }
           />
+          <Route path='/checkout' element={<ProtectedRouter><CheckOutpage/></ProtectedRouter>}/>
         </Routes>
 
         {showToast && (

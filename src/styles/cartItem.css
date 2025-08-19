@@ -327,6 +327,20 @@ body {
   position: sticky;
   top: 70px;
 }
+.for-icon{
+    display: flex;
+
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-left: 50vw;
+    margin-top: 40vh;
+    margin-bottom: 40vh;
+}
+
+span:first-child {
+  margin-right: 10px;
+}
 
 .order-summary h2 {
   margin-bottom: 20px;
@@ -407,6 +421,8 @@ body {
   font-size: 14px;
   color: #2e7d32;
 }
+
+
 
 /* Empty Cart */
 .empty-cart-container {
