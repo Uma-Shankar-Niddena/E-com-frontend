@@ -29,7 +29,7 @@ export default function AuthApp() {
   // Update URL when tab changes
   const handleTabChange = (tab) => {
     setActiveTab(tab)
-    const newUrl = tab === "login" ? "/" : `/?tab=${tab}`
+    const newUrl = tab === "register" ? "/" : `/?tab=${tab}`
     window.history.pushState(null, "", newUrl)
   }
 

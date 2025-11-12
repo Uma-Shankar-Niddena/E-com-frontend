@@ -19,80 +19,43 @@ function UserLogin() {
   const [username,setUsername]=useState('')
   const [password,setPassword]=useState('')
 
- useEffect(() => {
-    // 💣 Delete the token cookie when the Login page loads
-    document.cookie = "token=; path=/;";
-  }, []);
-
-  const handleSubmit = async(e) => {
-    e.preventDefault()
-    
-
-    setIsLoading(true)
-    const userDetails={username,password}
-    try{
-      const url="http://localhost:3001/login"
-      const options={
-        method:"POST",
-        credentials: "include",
-        headers:{
-        "Content-Type":"application/json"
-        },
-        
-        body:JSON.stringify(userDetails)
-      }
-      const response=await fetch(url,options)
-      const data=await response.json()
-      console.log(data) 
-
-      Cookies.set("token", data.jwtToken);  // Save JWT
-     
 
 
-      
-       
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
 
-     if (response.ok){
-      setMessage(data.message)
-      setErrors('')
-        setTimeout(() => {
+  try {
+    const url = "https://e-com-backend-5dfi.onrender.com/user/login";
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+      credentials: "include", // ✅ allow cookies to be set
+    });
 
-            navigation('/home')
+    const data = await response.json();
+    console.log("Login response:", data);
 
-      }, 2000);
-       
-        
-       }
-
-
-     if (!response.ok){
-      setErrors(data.message)
+    if (response.ok) {
+      console.log(response.ok)
+      setMessage(data.message);
+      setErrors("");
+      navigation("/home")
+    } else {
+      setErrors(data.message);
       setTimeout(() => {
-              
-              setIsLoading(false)
-              setUsername("")
-              setPassword("")
-              setErrors("")
-
-       }, 1000);
-     }
-       
-
+        setUsername("");
+        setPassword("");
+        setIsLoading(false);
+      }, 1000);
     }
-    catch(error){
-      setUsername("")
-      setErrors(error.message)
-      setPassword("")
-      setIsLoading(false)
-      
-        
-    }
-
-    
-
-    // Simulate API call
-    
+  } catch (error) {
+    setErrors(error.message);
+    setIsLoading(false);
   }
+};
+
 
   return (
     <div className="user-login">

@@ -13,37 +13,39 @@ const CartComponent = ({increaseQuantity, decreaseQuantity }) => {
   const [isLoading,setLoading]=useState(false)
 
   // Calculate totals
+const fetchCartItems = async () => {
+  setLoading(true);
+  try {
+    const url = "https://e-com-backend-5dfi.onrender.com/cart";
+    const token = localStorage.getItem("token"); // ✅ get token
 
- const fetchCartItems=async()=>{
-  setLoading(true)
-  try{
-     const url="http://localhost:3001/cart"
-     const options={
-         method:"GET",
-         credentials:"include",
-         headers:{
-          "Content-Type":"application/json"
-         }
-     }
+    const options = {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+       
+      },
+    };
 
-    const response=await fetch(url,options)
+    const response = await fetch(url, options);
+    const data = await response.json();
+    console.log("cart data is ", data);
 
-    const data=await response.json()
-    console.log(data)
-    setCartItems(data.message)
-   
- 
-   
-
+    if (Array.isArray(data.message)) {
+      setCartItems(data.message); // ✅ valid cart items
+    } else {
+      console.warn("Error response:", data);
+      setCartItems([]); // ✅ fallback, avoid crash
+    }
+  } catch (error) {
+    console.error("Fetch error:", error.message);
+    setCartItems([]); // ✅ fallback
+  } finally {
+    setLoading(false);
   }
-  catch(error){
-    console.log (error.message)
-  }
-  finally {
-  setLoading(false)  }
+};
 
-
-  }
   
   
 useEffect(()=>{
@@ -55,15 +57,16 @@ useEffect(()=>{
 const removeItem=async(removecartItem)=>{
    
     const id=removecartItem
+    console.log(id)
 
     try{
-      const url="http://localhost:3001/cart/remove/${id}"
+      const url = `https://e-com-backend-5dfi.onrender.com/cart/delete/${id}`;
+
       const options={
         method:"DELETE",
         credentials:"include",
         headers:{
           "Content-Type":"application/json"
-
         },
       }
       const response=await fetch(url,options)
@@ -177,31 +180,26 @@ isLoading?(<div className='for-icon'><Player
 
               <div className="item-details">
                 <div className="item-header">
-                  <div>
+                  <div className='card-div'>
                     <h3>{item.name}</h3>
                     {item.description && <p className="item-description">{item.description}</p>}
                     {item.category && <span className="item-category">{item.category}</span>}
+                    <p className='item-description'>Quantity:{item.quantity}</p>
                   </div>
-                  <button className="remove-btn" onClick={() => removeItem(item.cartId)}>
-                    🗑️
-                  </button>
+                  
                 </div>
 
                 <div className="item-footer">
                   <div className="item-price">₹{item.price.toFixed(2)}</div>
 
-                  <div className="quantity-controls">
-                    <button className="qty-btn" onClick={() => decreaseQuantity(item.id)} disabled={item.quantity <= 1}>
-                      -
-                    </button>
-                    <span className="quantity">{item.quantity}</span>
-                    <button className="qty-btn" onClick={() => increaseQuantity(item.id)}>
-                      +
-                    </button>
-                  </div>
+                 
                 </div>
 
                 <div className="item-subtotal">
+                  <button className="remove-btn" onClick={() => removeItem(item.cartId)}>
+                    🗑️
+                  </button>
+
                   Subtotal: <strong>₹{(item.price * item.quantity).toFixed(2)}</strong>
                 </div>
               </div>

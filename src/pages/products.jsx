@@ -91,7 +91,7 @@ function Products({ addToCart, handleAddToCart }) {
          
         ///products data 
        
-        let fetchedData=await fetch("http://localhost:3001/api/products")
+        let fetchedData=await fetch("https://e-com-backend-5dfi.onrender.com/api/products")
         let data=await fetchedData.json()
         console.log("api data from backend")
         console.log(data)
@@ -180,7 +180,7 @@ function Products({ addToCart, handleAddToCart }) {
   
     switch (cat.toLowerCase()) {
       case "wine":
-        setTopHead(categoryHeadings["wine"])
+        setTopHead(categoryHeadings["alcohol"])
         setPlaceHolder("Search wines...")
         break
       case "stuff":
@@ -216,7 +216,7 @@ function Products({ addToCart, handleAddToCart }) {
   Water: "/water-bottle-icon.svg",
   cigar: "/cigar-icon.svg"
 };
-
+console.log("sorted, products",sortedProducts)
   return (
     <>
       {/* Category Section */}
@@ -296,7 +296,7 @@ function Products({ addToCart, handleAddToCart }) {
             <div className="products-grid">
               {sortedProducts.map((product) => (
                 <ProductCard
-                  key={product.id}
+                  key={product._id}
                   product={product}
                   addToCart={addToCart}
                   handleAddToCart={handleAddToCart}

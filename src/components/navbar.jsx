@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 function Navbar({ram}) {
   const navigate = useNavigate();
   /*const [totalItems,setTotalitems]=useState(0)*/
-  const totalItems=ram.length
+  const totalItems=10
  
   
     

@@ -1,13 +1,13 @@
 function ProductCard({ product, addToCart, handleAddToCart }) {
   const {
-    id = 1,
+    _id = 1,
     name = "Premium Wine",
     price = 29.99,
     originalPrice = null,
     image = "/wine1.png",
     description = "A fine wine with excellent taste",
     vintage = "2020",
-    region = "Napa Valley",
+    origin = "Napa Valley",
     type = "Red Wine",
     rating = 4.5,
     inStock = true,
@@ -34,13 +34,13 @@ function ProductCard({ product, addToCart, handleAddToCart }) {
       stars.push(
         <svg key="half" className="star" viewBox="0 0 20 20" aria-label="half-star">
           <defs>
-            <linearGradient id={`half-gradient-${id}`}>
+            <linearGradient id={`half-gradient-${_id}`}>
               <stop offset="50%" stopColor="currentColor" />
               <stop offset="50%" stopColor="transparent" />
             </linearGradient>
           </defs>
           <path
-            fill={`url(#half-gradient-${id})`}
+            fill={`url(#half-gradient-${_id})`}
             d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"
           />
         </svg>
@@ -50,10 +50,13 @@ function ProductCard({ product, addToCart, handleAddToCart }) {
     return stars
   }
 
+  
+
   return (
     <div className="product-card">
       {/* Product Image */}
-      <div className="product-image-container">
+      <img src="/images/aloogadda_pakodi.jpg"/>
+      <div className="product-image-containe  r">
       <img
           src={image}
           alt={name}
@@ -75,7 +78,7 @@ function ProductCard({ product, addToCart, handleAddToCart }) {
         </div>
 
         <h3 className="product-name">{name}</h3>
-        <p className="product-region">{region}</p>
+        <p className="product-region">{origin}</p>
         <p className="product-description">{description}</p>
 
         <div className="product-rating">

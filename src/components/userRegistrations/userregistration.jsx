@@ -40,7 +40,8 @@ function UserRegistration() {
     setIsLoading(true)
     
     const userDetails={username,email,password}
-     const url='${import.meta.env.VITE_API_URL}/signup' 
+    
+     const url='https://e-com-backend-5dfi.onrender.com/user/register'
      
     try{
         const options={
@@ -50,8 +51,8 @@ function UserRegistration() {
          },
         body:JSON.stringify(userDetails),
      }
-         setMessage("Registration SucessFull")
 
+         setMessage("Registration SucessFull")
        handlenameValue("")
        setPass("")
        setEmail("")
@@ -70,6 +71,7 @@ function UserRegistration() {
   }
       
       const data = await response.json();
+      console.log(data)
       setTimeout(() => {
 
             navigation('/login')

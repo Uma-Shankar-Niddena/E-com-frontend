@@ -33,14 +33,15 @@ useEffect(()=>{
   localStorage.setItem("cartitems",JSON.stringify(cartItems))
 
   const getIntial=async()=>{
-    const url='http://localhost:3001/cart' 
+    const url='https://e-com-backend-5dfi.onrender.com/cart' 
   const options={
     method:"GET",
-    credentials:"include"
+    credentials: "include"
   }
 
   
   const responsee=await fetch(url,options)
+  console.log(responsee)
 
    return responsee
 
@@ -63,7 +64,7 @@ useEffect(()=>{
    
 
   
-})
+},[])
 
   const addToCart = async (product) => {
      setCartItems((prevData)=>[...prevData,product])
@@ -85,7 +86,7 @@ useEffect(()=>{
    
 
      try{
-      const url='http://localhost:3001/cart/add'
+      const url='https://e-com-backend-5dfi.onrender.com/cart/add'
       const options={
           method:"POST",
           headers:{
@@ -118,16 +119,18 @@ useEffect(()=>{
 
 
   const increaseQuantity = (id) => {
-    setCartItems((items) =>
-      items.map((item) =>
+    setCartItems((cartitems) =>
+      cartitems.map((item) =>
         item.id === id ? { ...item, quantity: item.quantity + 1 } : item
       )
     );
   };
 
   const decreaseQuantity = (id) => {
-    setCartItems((items) =>
-      items.map((item) =>
+
+
+    setCartItems((cartItems) =>
+      cartItems.map((item) =>
         item.id === id && item.quantity > 1
           ? { ...item, quantity: item.quantity - 1 }
           : item
@@ -140,7 +143,7 @@ const removeItem=async(removecartItem)=>{
     const id=removecartItem
 
     try{
-      const url="http://localhost:3001/cart/remove/${id}"
+      const url=`https://e-com-backend-5dfi.onrender.com/delete/${id}`
       const options={
         method:"DELETE",
         credentials:"include",
@@ -157,7 +160,7 @@ const removeItem=async(removecartItem)=>{
       }
         ///get updated cartitems 
         
-     const url2="http://localhost:3001/cart"
+     const url2="https://e-com-backend-5dfi.onrender.com/cart"
      const options2={
        method:"GET",
        credentials:"include",

@@ -315,6 +315,10 @@ body {
   text-align: right;
   font-size: 14px;
   color: #666;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Order Summary */
@@ -660,6 +664,8 @@ span:first-child {
   .cart-item {
     flex-direction: column;
     gap: 15px;
+    
+    
   }
 
   .item-image {
