@@ -43,7 +43,11 @@ const handleSubmit = async (e) => {
     if (response.ok) {
       setMessage(data.message);
       setErrors("");
-      setTimeout(() => navigation("/home"), 1000);
+      setTimeout(() => {
+           navigation("/home");
+      }, 2000);
+      console.log("we have to redirect now");
+   
     } else {
       setErrors(data.message);
       setTimeout(() => {
