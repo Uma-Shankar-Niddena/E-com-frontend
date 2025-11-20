@@ -15,36 +15,33 @@ const CartComponent = ({increaseQuantity, decreaseQuantity }) => {
   // Calculate totals
 const fetchCartItems = async () => {
   setLoading(true);
+
   try {
     const url = "https://e-com-backend-5dfi.onrender.com/cart";
-    const token = localStorage.getItem("token"); // ✅ get token
 
-    const options = {
+    const response = await fetch(url, {
       method: "GET",
       credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-       
-      },
-    };
+    });
 
-    const response = await fetch(url, options);
     const data = await response.json();
     console.log("cart data is ", data);
 
-    if (Array.isArray(data.message)) {
-      setCartItems(data.message); // ✅ valid cart items
+    if (Array.isArray(data.allCartItems)) {
+      setCartItems(data.allCartItems);
     } else {
-      console.warn("Error response:", data);
-      setCartItems([]); // ✅ fallback, avoid crash
+      console.warn("Unexpected response format:", data);
+      setCartItems([]);
     }
+
   } catch (error) {
     console.error("Fetch error:", error.message);
-    setCartItems([]); // ✅ fallback
+    setCartItems([]);
   } finally {
     setLoading(false);
   }
 };
+
 
   
   

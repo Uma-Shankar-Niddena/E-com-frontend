@@ -41,7 +41,7 @@ useEffect(()=>{
 
   
   const responsee=await fetch(url,options)
-  console.log(responsee)
+  console.log("respone from cart ",responsee)
 
    return responsee
 

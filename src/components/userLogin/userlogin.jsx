@@ -19,7 +19,10 @@ function UserLogin() {
   const [username,setUsername]=useState('')
   const [password,setPassword]=useState('')
 
-
+ useEffect(() => {
+    // 💣 Delete the token cookie when the Login page loads
+    document.cookie = "token=; path=/;";
+  });
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -38,10 +41,9 @@ const handleSubmit = async (e) => {
     console.log("Login response:", data);
 
     if (response.ok) {
-      console.log(response.ok)
       setMessage(data.message);
       setErrors("");
-      navigation("/home")
+      setTimeout(() => navigation("/home"), 1000);
     } else {
       setErrors(data.message);
       setTimeout(() => {
