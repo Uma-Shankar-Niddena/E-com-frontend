@@ -14,8 +14,10 @@ export default function ProtectedRoute({ children }) {
         });
 
         const data = await res.json();
+        console.log("Auth check response:", data);
+
         setLoggedIn(data.loggedIn);
-      } catch (error) {
+      } catch (err) {
         setLoggedIn(false);
       } finally {
         setLoading(false);
